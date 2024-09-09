@@ -1,6 +1,6 @@
 package com.betmanager.repositories;
 
-import com.betmanager.models.UserEntity;
+import com.betmanager.models.entities.UserEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;

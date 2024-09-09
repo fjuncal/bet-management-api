@@ -1,6 +1,6 @@
 package com.betmanager.services;
 
-import com.betmanager.models.UserEntity;
+import com.betmanager.models.entities.UserEntity;
 import com.betmanager.repositories.UserRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.security.core.userdetails.User;

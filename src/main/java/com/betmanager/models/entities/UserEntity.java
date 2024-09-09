@@ -1,4 +1,4 @@
-package com.betmanager.models;
+package com.betmanager.models.entities;
 
 import jakarta.persistence.*;
 import lombok.*;
