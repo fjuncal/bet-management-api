@@ -24,9 +24,10 @@ public class UserServiceImpl implements IUserService {
 
         //vejo se o username ja existe
         Optional<UserEntity> userByUsername = userRepository.findByUsername(user.getUsername());
+        Optional<UserEntity> userByEmail = userRepository.findByEmail(user.getEmail());
 
-        if(userByUsername.isPresent()){
-            throw new UserAlreadyExist("User Already Exist with username: " + user.getUsername());
+        if(userByUsername.isPresent() || userByEmail.isPresent()) {
+            throw new UserAlreadyExist("User or Email Already Exist with username: " + user.getUsername());
         }
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         userRepository.save(user);
