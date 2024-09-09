@@ -32,20 +32,15 @@ public class AuthController {
     private final UserServiceImpl userService;
 
     @PostMapping("/register")
-    public ResponseEntity<Boolean> registerUser(@RequestBody UserEntity user){
+    public ResponseEntity<Boolean> registerUser(@RequestBody UserEntity user) {
         Boolean success = userService.createUser(user);
         return new ResponseEntity<>(success, HttpStatus.CREATED);
 
     }
 
     @PostMapping("/login")
-    public ResponseEntity<AuthenticationResponse> createAuthToken(@RequestBody AuthenticationRequest authenticationRequest){
-        try {
-            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(authenticationRequest.getUsername(), authenticationRequest.getPassword()));
-        } catch (AuthenticationException e){
-            log.error(HttpStatus.NOT_FOUND + " Invalid username or password " + e.getMessage());
-            return new ResponseEntity<>(new AuthenticationResponse( "Invalid username or password"), HttpStatus.NOT_FOUND);
-        }
+    public ResponseEntity<AuthenticationResponse> createAuthToken(@RequestBody AuthenticationRequest authenticationRequest) {
+        authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(authenticationRequest.getUsername(), authenticationRequest.getPassword()));
 
         UserDetails userDetails = userDetailsService.loadUserByUsername(authenticationRequest.getUsername());
         String jwt = jwtTokenUtil.generateToken(userDetails);
