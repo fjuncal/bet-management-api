@@ -1,14 +1,12 @@
 package com.betmanager.controllers;
 
 
-import com.betmanager.exception.NoUserFoundException;
 import com.betmanager.models.dtos.AuthenticationRequest;
 import com.betmanager.models.dtos.AuthenticationResponse;
-import com.betmanager.models.dtos.ErrorResponse;
 import com.betmanager.models.entities.UserEntity;
-import com.betmanager.repositories.UserRepository;
 import com.betmanager.security.JwtTokenUtil;
 import com.betmanager.services.UserDetailsServiceImpl;
+import com.betmanager.services.UserServiceImpl;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -17,38 +15,26 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.Optional;
 
 @Slf4j
 @RestController
 @RequestMapping("/api/auth")
 @AllArgsConstructor
 public class AuthController {
-    private final UserRepository userRepository;
-    private final PasswordEncoder passwordEncoder;
+
     private final AuthenticationManager authenticationManager;
     private final JwtTokenUtil jwtTokenUtil;
     private final UserDetailsServiceImpl userDetailsService;
+    private final UserServiceImpl userService;
 
     @PostMapping("/register")
-    public ResponseEntity<HttpStatus> registerUser(@RequestBody UserEntity user){
-
-        Optional<UserEntity> userByUsername = userRepository.findByUsername(user.getUsername());
-
-        if(userByUsername.isPresent()){
-            return new ResponseEntity<>(HttpStatus.CONFLICT);
-        }
-
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
-        userRepository.save(user);
-
-        return new ResponseEntity<>(HttpStatus.CREATED);
+    public ResponseEntity<Boolean> registerUser(@RequestBody UserEntity user){
+        Boolean success = userService.createUser(user);
+        return new ResponseEntity<>(success, HttpStatus.CREATED);
 
     }
 

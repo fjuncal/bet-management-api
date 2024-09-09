@@ -17,4 +17,10 @@ public class GlobalExceptionHandler {
         log.error(HttpStatus.NOT_FOUND + ex.getMessage());
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorResponse(HttpStatus.NOT_FOUND.value(), ex.getMessage()));
     }
+
+    @ExceptionHandler(value = UserAlreadyExist.class)
+    public ResponseEntity<ErrorResponse> handleUserAlreadyExist(UserAlreadyExist ex) {
+        log.error(HttpStatus.CONFLICT + ex.getMessage());
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(new ErrorResponse(HttpStatus.CONFLICT.value(), ex.getMessage()));
+    }
 }
