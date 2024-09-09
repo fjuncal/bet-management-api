@@ -30,4 +30,10 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> handleAuthenticationException(AuthenticationException ex) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorResponse(HttpStatus.NOT_FOUND.value(), ex.getMessage()));
     }
+
+    @ExceptionHandler(value = NoBetFoundException.class)
+    public ResponseEntity<ErrorResponse> handleNoBetFoundException(NoBetFoundException ex) {
+        log.error(HttpStatus.NOT_FOUND + ex.getMessage());
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorResponse(HttpStatus.NOT_FOUND.value(), ex.getMessage()));
+    }
 }

@@ -20,6 +20,8 @@ public class Bet {
     private String type;
     private Double amount;
     private LocalDateTime placedAt;
+    private String status;
+    private Double odds;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
