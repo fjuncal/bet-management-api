@@ -30,5 +30,5 @@ public interface IBetAPI {
             @RequestParam(required = false) String status,
             @RequestParam(required = false) BigDecimal minAmount,
             @RequestParam(required = false) BigDecimal maxAmount,
-            @RequestParam(required = false) Long userId);
+            @RequestParam Long userId); //userId obrigatorio
 }

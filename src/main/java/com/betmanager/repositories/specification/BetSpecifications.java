@@ -21,7 +21,10 @@ public class BetSpecifications {
     public static Specification<Bet> hasStatus(String status) {
         return (root, query, criteriaBuilder) -> {
             if (status != null) {
-                return criteriaBuilder.equal(root.get("status"), status);
+                return criteriaBuilder.like(
+                        criteriaBuilder.lower(root.get("status")),
+                        criteriaBuilder.lower(criteriaBuilder.literal(status))
+                );
             } else {
                 return null;
             }
