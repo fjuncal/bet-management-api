@@ -39,7 +39,7 @@ public class Bet {
     @Positive(message = "Odds must be positive")
     private Double odds;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "user_id")
     private UserEntity user;
 
