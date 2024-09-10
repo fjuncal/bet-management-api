@@ -1,6 +1,7 @@
-package com.betmanager.controllers;
+package com.betmanager.interfaces.rest.controllers;
 
 
+import com.betmanager.interfaces.rest.IBetAPI;
 import com.betmanager.models.entities.Bet;
 import com.betmanager.services.BetServiceImpl;
 import jakarta.validation.Valid;
@@ -16,27 +17,27 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/bets")
 @AllArgsConstructor
-public class BetController {
+public class BetController implements IBetAPI {
     private final BetServiceImpl betService;
-    @PostMapping("/user/{userId}")
+    @Override
     public ResponseEntity<Bet> createBet(@Valid @RequestBody Bet bet, @PathVariable Long userId) {
         Bet savedBet = betService.saveBet(bet, userId);
         return ResponseEntity.status(HttpStatus.CREATED).body(savedBet);
     }
 
-    @GetMapping("/user/{userId}")
+    @Override
     public ResponseEntity<List<Bet>> getBetsByUserId(@PathVariable Long userId) {
         List<Bet> bets = betService.getBetsByUserId(userId);
         return ResponseEntity.ok(bets);
     }
 
-    @PutMapping("/{betId}")
+    @Override
     public ResponseEntity<Bet> updateBet(@PathVariable Long betId, @RequestBody Bet betDetails) {
         Bet updatedBet = betService.udapteBet(betId, betDetails);
         return ResponseEntity.ok(updatedBet);
     }
 
-    @DeleteMapping("/{betId}")
+    @Override
     public ResponseEntity<Void> deleteBet(@PathVariable Long betId) {
         betService.deleteBet(betId);
         return ResponseEntity.noContent().build();

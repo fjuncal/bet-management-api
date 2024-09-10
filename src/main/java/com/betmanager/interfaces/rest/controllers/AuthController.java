@@ -1,4 +1,4 @@
-package com.betmanager.controllers;
+package com.betmanager.interfaces.rest.controllers;
 
 
 import com.betmanager.models.dtos.AuthenticationRequest;
