@@ -12,25 +12,25 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @Slf4j
-@AllArgsConstructor
 @RestController
 @RequestMapping("/api/bets")
+@AllArgsConstructor
 public class BetController {
     private final BetServiceImpl betService;
     @PostMapping("/user/{userId}")
-    public ResponseEntity<Bet> createBet(Bet bet, Long userId) {
+    public ResponseEntity<Bet> createBet(@RequestBody Bet bet, @PathVariable Long userId) {
         Bet savedBet = betService.saveBet(bet, userId);
         return ResponseEntity.status(HttpStatus.CREATED).body(savedBet);
     }
 
     @GetMapping("/user/{userId}")
-    public ResponseEntity<List<Bet>> getBetsByUserId(Long userId) {
+    public ResponseEntity<List<Bet>> getBetsByUserId(@PathVariable Long userId) {
         List<Bet> bets = betService.getBetsByUserId(userId);
         return ResponseEntity.ok(bets);
     }
 
     @PutMapping("/{betId}")
-    public ResponseEntity<Bet> updateBet(@PathVariable Long betId, Bet betDetails) {
+    public ResponseEntity<Bet> updateBet(@PathVariable Long betId, @RequestBody Bet betDetails) {
         Bet updatedBet = betService.udapteBet(betId, betDetails);
         return ResponseEntity.ok(updatedBet);
     }
