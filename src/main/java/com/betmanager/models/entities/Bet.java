@@ -29,7 +29,6 @@ public class Bet {
     @Positive(message = "Amount must be positive")
     private Double amount;
 
-    @NotNull(message = "PlacedAt cannot be null")
     private LocalDateTime placedAt;
 
     @NotNull(message = "Status cannot be null")
