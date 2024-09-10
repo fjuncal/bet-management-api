@@ -6,10 +6,14 @@ import com.betmanager.models.entities.Bet;
 import com.betmanager.models.entities.UserEntity;
 import com.betmanager.repositories.BetRepository;
 import com.betmanager.repositories.UserRepository;
+import com.betmanager.repositories.specification.BetSpecifications;
 import com.betmanager.services.interfaces.IBetService;
 import lombok.AllArgsConstructor;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.List;
 
 @Service
@@ -48,5 +52,15 @@ public class BetServiceImpl implements IBetService {
                 .orElseThrow(() -> new NoBetFoundException("Bet not found"));
 
         betRepository.delete(bet);
+    }
+
+    @Override
+    public List<Bet> generateReport(LocalDate startDate, LocalDate endDate, String status, BigDecimal minAmount, BigDecimal maxAmount, Long userId) {
+        return betRepository.findAll(Specification.where(
+                BetSpecifications.hasDateBetween(startDate, endDate)
+                        .and(BetSpecifications.hasStatus(status))
+                        .and(BetSpecifications.hasAmountBetween(minAmount, maxAmount))
+                        .and(BetSpecifications.hasUser(userId))
+        ));
     }
 }

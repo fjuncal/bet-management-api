@@ -11,6 +11,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.List;
 
 @Slf4j
@@ -41,5 +43,11 @@ public class BetController implements IBetAPI {
     public ResponseEntity<Void> deleteBet(@PathVariable Long betId) {
         betService.deleteBet(betId);
         return ResponseEntity.noContent().build();
+    }
+
+    @Override
+    public ResponseEntity<List<Bet>> getBetReport(LocalDate startDate, LocalDate endDate, String status, BigDecimal minAmount, BigDecimal maxAmount, Long userId) {
+        List<Bet> report = betService.generateReport(startDate, endDate, status, minAmount, maxAmount, userId);
+        return ResponseEntity.ok(report);
     }
 }

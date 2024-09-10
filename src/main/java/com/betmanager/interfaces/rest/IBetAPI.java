@@ -5,6 +5,8 @@ import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.List;
 
 public interface IBetAPI {
@@ -20,4 +22,13 @@ public interface IBetAPI {
 
     @DeleteMapping("/{betId}")
     ResponseEntity<Void> deleteBet(@PathVariable Long betId);
+
+    @GetMapping("/report")
+    public ResponseEntity<List<Bet>> getBetReport(
+            @RequestParam(required = false) LocalDate startDate,
+            @RequestParam(required = false) LocalDate endDate,
+            @RequestParam(required = false) String status,
+            @RequestParam(required = false) BigDecimal minAmount,
+            @RequestParam(required = false) BigDecimal maxAmount,
+            @RequestParam(required = false) Long userId);
 }
