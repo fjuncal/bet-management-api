@@ -3,6 +3,7 @@ package com.betmanager.controllers;
 
 import com.betmanager.models.entities.Bet;
 import com.betmanager.services.BetServiceImpl;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -18,7 +19,7 @@ import java.util.List;
 public class BetController {
     private final BetServiceImpl betService;
     @PostMapping("/user/{userId}")
-    public ResponseEntity<Bet> createBet(@RequestBody Bet bet, @PathVariable Long userId) {
+    public ResponseEntity<Bet> createBet(@Valid @RequestBody Bet bet, @PathVariable Long userId) {
         Bet savedBet = betService.saveBet(bet, userId);
         return ResponseEntity.status(HttpStatus.CREATED).body(savedBet);
     }
