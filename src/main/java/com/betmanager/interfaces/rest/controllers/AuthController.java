@@ -7,6 +7,7 @@ import com.betmanager.models.entities.UserEntity;
 import com.betmanager.security.JwtTokenUtil;
 import com.betmanager.services.UserDetailsServiceImpl;
 import com.betmanager.services.UserServiceImpl;
+import io.github.resilience4j.ratelimiter.annotation.RateLimiter;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -39,6 +40,7 @@ public class AuthController {
     }
 
     @PostMapping("/login")
+    @RateLimiter(name = "loginRateLimiter", fallbackMethod = "rateLimitFallback")
     public ResponseEntity<AuthenticationResponse> createAuthToken(@RequestBody AuthenticationRequest authenticationRequest) {
         authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(authenticationRequest.getUsername(), authenticationRequest.getPassword()));
 
@@ -46,5 +48,9 @@ public class AuthController {
         String jwt = jwtTokenUtil.generateToken(userDetails);
 
         return new ResponseEntity<>(new AuthenticationResponse(jwt), HttpStatus.OK);
+    }
+
+    public ResponseEntity<AuthenticationResponse> rateLimitFallback(AuthenticationRequest authenticationRequest, Throwable t) {
+        return ResponseEntity.status(429).body(null);
     }
 }
