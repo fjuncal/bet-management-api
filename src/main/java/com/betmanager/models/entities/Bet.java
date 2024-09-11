@@ -6,6 +6,8 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.Size;
 import lombok.*;
+import org.hibernate.envers.Audited;
+import org.hibernate.envers.NotAudited;
 
 import java.time.LocalDateTime;
 
@@ -14,6 +16,7 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @Table(name = "bets")
+@Audited
 @NoArgsConstructor
 @AllArgsConstructor
 public class Bet {
@@ -43,6 +46,7 @@ public class Bet {
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "user_id")
     @JsonIgnore
+    @NotAudited
     private UserEntity user;
 
     @PrePersist

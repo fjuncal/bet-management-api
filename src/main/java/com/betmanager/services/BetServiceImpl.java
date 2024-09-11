@@ -8,7 +8,11 @@ import com.betmanager.repositories.BetRepository;
 import com.betmanager.repositories.UserRepository;
 import com.betmanager.repositories.specification.BetSpecifications;
 import com.betmanager.services.interfaces.IBetService;
+import jakarta.persistence.EntityManager;
 import lombok.AllArgsConstructor;
+import org.hibernate.envers.AuditReader;
+import org.hibernate.envers.AuditReaderFactory;
+import org.hibernate.envers.query.AuditEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.jpa.domain.Specification;
@@ -24,6 +28,17 @@ public class BetServiceImpl implements IBetService {
     private final BetRepository betRepository;
     private final UserRepository userRepository;
     private static final Logger logger = LoggerFactory.getLogger(BetServiceImpl.class);
+
+    private EntityManager entityManager;
+
+    //exibir todas as alterações de uma aposta
+    public List getBetRevisions(Long betId) {
+        AuditReader auditReader = AuditReaderFactory.get(entityManager);
+        return auditReader.createQuery()
+                .forRevisionsOfEntity(Bet.class, false, true)
+                .add(AuditEntity.id().eq(betId))
+                .getResultList();
+    }
 
     @Override
     public Bet saveBet(Bet bet, Long userId) {
