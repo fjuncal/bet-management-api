@@ -8,6 +8,8 @@ import io.github.resilience4j.ratelimiter.annotation.RateLimiter;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -36,12 +38,12 @@ public class BetController implements IBetAPI {
 
     @Override
     @RateLimiter(name = "defaultRateLimiter", fallbackMethod = "rateLimitFallback")
-    public ResponseEntity<List<Bet>> getBetsByUserId(@PathVariable Long userId) {
-        List<Bet> bets = betService.getBetsByUserId(userId);
+    public ResponseEntity<Page<Bet>> getBetsByUserId(@PathVariable Long userId, Pageable pageable) {
+        Page<Bet>bets = betService.getBetsByUserId(userId, pageable);
         return ResponseEntity.ok(bets);
     }
-    public ResponseEntity<List<Bet>> rateLimitFallback(Long userId, Throwable t) {
-        return ResponseEntity.status(429).body(Collections.emptyList());
+    public ResponseEntity<Page<Bet>> rateLimitFallback(Long userId, Pageable pageable, Throwable t) {
+        return ResponseEntity.status(429).body(Page.empty());
     }
 
     @Override
@@ -57,8 +59,8 @@ public class BetController implements IBetAPI {
     }
 
     @Override
-    public ResponseEntity<List<Bet>> getBetReport(LocalDate startDate, LocalDate endDate, String status, BigDecimal minAmount, BigDecimal maxAmount, Long userId) {
-        List<Bet> report = betService.generateReport(startDate, endDate, status, minAmount, maxAmount, userId);
+    public ResponseEntity<Page<Bet>> getBetReport(LocalDate startDate, LocalDate endDate, String status, BigDecimal minAmount, BigDecimal maxAmount, Long userId, Pageable pageable) {
+        Page<Bet> report = betService.generateReport(startDate, endDate, status, minAmount, maxAmount, userId, pageable);
         return ResponseEntity.ok(report);
     }
 

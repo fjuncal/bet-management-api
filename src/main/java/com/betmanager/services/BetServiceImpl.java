@@ -15,6 +15,8 @@ import org.hibernate.envers.AuditReaderFactory;
 import org.hibernate.envers.query.AuditEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
@@ -50,8 +52,8 @@ public class BetServiceImpl implements IBetService {
     }
 
     @Override
-    public List<Bet> getBetsByUserId(Long userId) {
-        return betRepository.findByUserId(userId);
+    public Page<Bet> getBetsByUserId(Long userId, Pageable pageable) {
+        return betRepository.findByUserId(userId, pageable);
     }
 
     @Override
@@ -77,12 +79,12 @@ public class BetServiceImpl implements IBetService {
     }
 
     @Override
-    public List<Bet> generateReport(LocalDate startDate, LocalDate endDate, String status, BigDecimal minAmount, BigDecimal maxAmount, Long userId) {
+    public Page<Bet> generateReport(LocalDate startDate, LocalDate endDate, String status, BigDecimal minAmount, BigDecimal maxAmount, Long userId, Pageable pageable) {
         return betRepository.findAll(Specification.where(
                 BetSpecifications.hasDateBetween(startDate, endDate)
                         .and(BetSpecifications.hasStatus(status))
                         .and(BetSpecifications.hasAmountBetween(minAmount, maxAmount))
                         .and(BetSpecifications.hasUser(userId))
-        ));
+        ), pageable);
     }
 }
