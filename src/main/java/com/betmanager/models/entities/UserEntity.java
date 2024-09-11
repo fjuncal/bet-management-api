@@ -2,6 +2,7 @@ package com.betmanager.models.entities;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.envers.Audited;
 
 @Entity
 @Data
@@ -10,6 +11,7 @@ import lombok.*;
 @Table(name = "users")
 @NoArgsConstructor
 @AllArgsConstructor
+@Audited
 public class UserEntity {
 
     @Id
