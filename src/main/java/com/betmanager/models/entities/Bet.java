@@ -6,9 +6,8 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.Size;
 import lombok.*;
-import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedBy;
+import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
@@ -20,6 +19,7 @@ import java.time.LocalDateTime;
 @Table(name = "bets")
 @NoArgsConstructor
 @AllArgsConstructor
+@EntityListeners(AuditingEntityListener.class)
 public class Bet {
 
     @Id
@@ -37,7 +37,7 @@ public class Bet {
     @CreatedDate
     private LocalDateTime placedAt;
 
-    @LastModifiedBy
+    @LastModifiedDate
     private LocalDateTime updatedAt;
 
     @NotNull(message = "Status cannot be null")
@@ -51,7 +51,6 @@ public class Bet {
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "user_id")
     @JsonIgnore
-    @CreatedBy
     private UserEntity user;
 
 }
