@@ -32,7 +32,7 @@ public class BetController implements IBetAPI {
         return ResponseEntity.status(HttpStatus.CREATED).body(savedBet);
     }
 
-    public ResponseEntity<Bet> rateLimitFallback(Bet bet, Throwable t) {
+    public ResponseEntity<Bet> rateLimitFallback(Bet bet, Long userId, Throwable t) {
         return ResponseEntity.status(429).body(null);
     }
 

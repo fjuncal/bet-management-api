@@ -6,8 +6,10 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.Size;
 import lombok.*;
-import org.hibernate.envers.Audited;
-import org.hibernate.envers.NotAudited;
+import org.springframework.data.annotation.CreatedBy;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedBy;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
 
@@ -16,7 +18,6 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @Table(name = "bets")
-@Audited
 @NoArgsConstructor
 @AllArgsConstructor
 public class Bet {
@@ -33,7 +34,11 @@ public class Bet {
     @Positive(message = "Amount must be positive")
     private Double amount;
 
+    @CreatedDate
     private LocalDateTime placedAt;
+
+    @LastModifiedBy
+    private LocalDateTime updatedAt;
 
     @NotNull(message = "Status cannot be null")
     @Size(min = 3, max = 20, message = "Status must be between 3 and 20 characters")
@@ -46,11 +51,7 @@ public class Bet {
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "user_id")
     @JsonIgnore
-    @NotAudited
+    @CreatedBy
     private UserEntity user;
 
-    @PrePersist
-    public void prePersist() {
-        this.placedAt = LocalDateTime.now();
-    }
 }
