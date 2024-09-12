@@ -67,7 +67,7 @@ public class BetServiceImpl implements IBetService {
     }
 
     @Override
-    public Page<Bet> generateReport(LocalDate startDate, LocalDate endDate, String status, BigDecimal minAmount, BigDecimal maxAmount, Long userId, Pageable pageable) {
+    public Page<Bet> getBetsByFilters(LocalDate startDate, LocalDate endDate, String status, BigDecimal minAmount, BigDecimal maxAmount, Long userId, Pageable pageable) {
         return betRepository.findAll(Specification.where(
                 BetSpecifications.hasDateBetween(startDate, endDate)
                         .and(BetSpecifications.hasStatus(status))

@@ -26,7 +26,7 @@ public interface IBetAPI {
     ResponseEntity<Void> deleteBet(@PathVariable Long betId);
 
     @GetMapping("/report")
-    ResponseEntity<Page<Bet>> getBetReport(
+    ResponseEntity<Page<Bet>> getBetsByFilters(
             @RequestParam(required = false) LocalDate startDate,
             @RequestParam(required = false) LocalDate endDate,
             @RequestParam(required = false) String status,

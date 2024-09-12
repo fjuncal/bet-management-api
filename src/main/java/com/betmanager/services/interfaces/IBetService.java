@@ -14,5 +14,5 @@ public interface IBetService {
     Bet udapteBet(Long betId, Bet betDetails);
     void deleteBet(Long betId);
 
-    Page<Bet> generateReport(LocalDate startDate, LocalDate endDate, String status, BigDecimal minAmount, BigDecimal maxAmount, Long userId, Pageable pageable);
+    Page<Bet> getBetsByFilters(LocalDate startDate, LocalDate endDate, String status, BigDecimal minAmount, BigDecimal maxAmount, Long userId, Pageable pageable);
 }

@@ -59,8 +59,8 @@ public class BetController implements IBetAPI {
     }
 
     @Override
-    public ResponseEntity<Page<Bet>> getBetReport(LocalDate startDate, LocalDate endDate, String status, BigDecimal minAmount, BigDecimal maxAmount, Long userId, Pageable pageable) {
-        Page<Bet> report = betService.generateReport(startDate, endDate, status, minAmount, maxAmount, userId, pageable);
+    public ResponseEntity<Page<Bet>> getBetsByFilters(LocalDate startDate, LocalDate endDate, String status, BigDecimal minAmount, BigDecimal maxAmount, Long userId, Pageable pageable) {
+        Page<Bet> report = betService.getBetsByFilters(startDate, endDate, status, minAmount, maxAmount, userId, pageable);
         return ResponseEntity.ok(report);
     }
 
