@@ -1,5 +1,7 @@
 package com.betmanager.interfaces.rest;
 
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -14,5 +16,6 @@ public interface IReportAPI {
                                                @RequestParam String status,
                                                @RequestParam BigDecimal minAmount,
                                                @RequestParam BigDecimal maxAmount,
-                                               @RequestParam Long userId) ;
+                                               @RequestParam Long userId,
+                                               @PageableDefault(size = 20) Pageable pageable) ;
 }
