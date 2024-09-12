@@ -15,6 +15,9 @@ import com.itextpdf.layout.element.Table;
 import com.itextpdf.layout.properties.UnitValue;
 import com.opencsv.CSVWriter;
 import lombok.SneakyThrows;
+import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.ss.util.CellRangeAddress;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -90,24 +93,73 @@ public class ReportServiceImpl implements IReportService {
 
     @Override
     public ResponseEntity<byte[]> exportReportAsCsv(List<Bet> bets) throws IOException {
-        StringWriter writer = new StringWriter();
-        CSVWriter csvWriter = new CSVWriter(writer);
+        try (XSSFWorkbook workbook = new XSSFWorkbook()) {
+            Sheet sheet = workbook.createSheet("Bet Report");
 
-        // Adiciona cabeçalhos
-        String[] header = {"ID", "Type", "Amount", "Status", "Odds"};
-        csvWriter.writeNext(header);
+            // Create header row
+            Row headerRow = sheet.createRow(0);
+            String[] headersSheet = {"ID", "Tipo", "Status", "Quantia", "Odds"};
 
-        // Adiciona dados
-        for (Bet bet : bets) {
-            String[] data = {bet.getId().toString(), bet.getType(), bet.getAmount().toString(),
-                    bet.getStatus(), bet.getOdds().toString()};
-            csvWriter.writeNext(data);
+            CellStyle headerStyle = workbook.createCellStyle();
+            headerStyle.setFillForegroundColor(IndexedColors.LIGHT_BLUE.getIndex());
+            headerStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+            headerStyle.setBorderBottom(BorderStyle.THIN);
+            headerStyle.setBorderLeft(BorderStyle.THIN);
+            headerStyle.setBorderRight(BorderStyle.THIN);
+            headerStyle.setBorderTop(BorderStyle.THIN);
+            headerStyle.setAlignment(HorizontalAlignment.CENTER);
+            Font headerFont = workbook.createFont();
+            headerFont.setBold(true);
+            headerStyle.setFont(headerFont);
+
+            for (int i = 0; i < headersSheet.length; i++) {
+                org.apache.poi.ss.usermodel.Cell cell = headerRow.createCell(i);
+                cell.setCellValue(headersSheet[i]);
+                cell.setCellStyle(headerStyle);
+            }
+
+            // Create data rows
+            CellStyle dataStyle = workbook.createCellStyle();
+            dataStyle.setBorderBottom(BorderStyle.THIN);
+            dataStyle.setBorderLeft(BorderStyle.THIN);
+            dataStyle.setBorderRight(BorderStyle.THIN);
+            dataStyle.setBorderTop(BorderStyle.THIN);
+
+            int rowNum = 1;
+            for (Bet bet : bets) {
+                Row row = sheet.createRow(rowNum++);
+
+                row.createCell(0).setCellValue(bet.getId());
+                row.createCell(1).setCellValue(bet.getType());
+                row.createCell(2).setCellValue(bet.getStatus());
+                row.createCell(3).setCellValue(bet.getAmount());
+                row.createCell(4).setCellValue(bet.getOdds());
+
+                for (int i = 0; i < headersSheet.length; i++) {
+                    row.getCell(i).setCellStyle(dataStyle);
+                }
+            }
+
+            // Auto size columns
+            for (int i = 0; i < headersSheet.length; i++) {
+                sheet.autoSizeColumn(i);
+            }
+
+            // Create title
+            CreationHelper createHelper = workbook.getCreationHelper();
+            org.apache.poi.ss.usermodel.Cell titleCell = sheet.createRow(0).createCell(0);
+            titleCell.setCellValue("Relatório de Apostas");
+            titleCell.setCellStyle(headerStyle);
+            sheet.addMergedRegion(new CellRangeAddress(0, 0, 0, headersSheet.length - 1));
+
+            // Write to ByteArrayOutputStream
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            workbook.write(baos);
+
+            HttpHeaders headers = new HttpHeaders();
+            headers.add("Content-Disposition", "attachment; filename=bet_report.xlsx");
+
+            return new ResponseEntity<>(baos.toByteArray(), headers, HttpStatus.OK);
         }
-
-        csvWriter.close();
-
-        HttpHeaders headers = new HttpHeaders();
-        headers.add("Content-Disposition", "attachment; filename=bet_report.csv");
-        return new ResponseEntity<>(writer.toString().getBytes(), headers, HttpStatus.OK);
     }
 }
