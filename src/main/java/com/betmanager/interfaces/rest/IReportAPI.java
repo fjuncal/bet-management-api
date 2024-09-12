@@ -18,4 +18,13 @@ public interface IReportAPI {
                                         @RequestParam BigDecimal maxAmount,
                                         @RequestParam Long userId,
                                         @PageableDefault(size = 20) Pageable pageable);
+
+    @GetMapping("/csv")
+    ResponseEntity<byte[]> getReportCsv(@RequestParam LocalDate startDate,
+                                        @RequestParam LocalDate endDate,
+                                        @RequestParam String status,
+                                        @RequestParam BigDecimal minAmount,
+                                        @RequestParam BigDecimal maxAmount,
+                                        @RequestParam Long userId,
+                                        @PageableDefault(size = 20) Pageable pageable);
 }
