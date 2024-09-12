@@ -1,5 +1,6 @@
 package com.betmanager.models.entities;
 
+import com.betmanager.exception.anotations.StatusValidation;
 import com.betmanager.models.enums.BetStatusEnum;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
@@ -45,6 +46,7 @@ public class Bet {
 
     @NotNull(message = "Status cannot be null")
     @Enumerated(EnumType.STRING)
+    @StatusValidation
     private BetStatusEnum status;
 
     @NotNull(message = "Odds cannot be null")
