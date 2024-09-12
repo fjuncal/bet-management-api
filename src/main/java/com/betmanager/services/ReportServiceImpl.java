@@ -86,7 +86,7 @@ public class ReportServiceImpl implements IReportService {
     private void addRow(Table table, Bet bet) {
         table.addCell(new Cell().add(new Paragraph(String.valueOf(bet.getId()))));
         table.addCell(new Cell().add(new Paragraph(bet.getType())));
-        table.addCell(new Cell().add(new Paragraph(bet.getStatus())));
+        table.addCell(new Cell().add(new Paragraph(bet.getStatus().name())));
         table.addCell(new Cell().add(new Paragraph(String.valueOf(bet.getAmount()))));
         table.addCell(new Cell().add(new Paragraph(String.valueOf(bet.getOdds()))));
     }
@@ -131,7 +131,7 @@ public class ReportServiceImpl implements IReportService {
 
                 row.createCell(0).setCellValue(bet.getId());
                 row.createCell(1).setCellValue(bet.getType());
-                row.createCell(2).setCellValue(bet.getStatus());
+                row.createCell(2).setCellValue(bet.getStatus().name());
                 row.createCell(3).setCellValue(bet.getAmount());
                 row.createCell(4).setCellValue(bet.getOdds());
 

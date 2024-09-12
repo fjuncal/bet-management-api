@@ -1,5 +1,6 @@
 package com.betmanager.models.entities;
 
+import com.betmanager.models.enums.BetStatusEnum;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
@@ -43,8 +44,8 @@ public class Bet {
     private LocalDateTime updatedAt;
 
     @NotNull(message = "Status cannot be null")
-    @Size(min = 3, max = 20, message = "Status must be between 3 and 20 characters")
-    private String status;
+    @Enumerated(EnumType.STRING)
+    private BetStatusEnum status;
 
     @NotNull(message = "Odds cannot be null")
     @Positive(message = "Odds must be positive")
