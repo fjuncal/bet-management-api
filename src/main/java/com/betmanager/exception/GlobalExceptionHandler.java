@@ -64,4 +64,10 @@ public class GlobalExceptionHandler {
         log.error(HttpStatus.BAD_REQUEST + ex.getMessage());
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(HttpStatus.BAD_REQUEST.value(), ex.getMessage()));
     }
+
+    @ExceptionHandler(ClassNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleClassNotFoundException(ClassNotFoundException ex) {
+        log.error("ClassNotFoundException: " + ex.getMessage());
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR.value(), "Internal server error occurred."));
+    }
 }
