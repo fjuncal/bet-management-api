@@ -10,12 +10,14 @@ import com.itextpdf.text.pdf.PdfWriter;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.List;
 
-public class ReportService implements IReportService {
+@Service
+public class ReportServiceImpl implements IReportService {
     @Override
     public ResponseEntity<byte[]> exportReportAsPdf(List<Bet> bets) {
         try (ByteArrayOutputStream out = new ByteArrayOutputStream()) {
