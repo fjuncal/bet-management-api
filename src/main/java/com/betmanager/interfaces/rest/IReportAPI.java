@@ -11,11 +11,11 @@ import java.time.LocalDate;
 
 public interface IReportAPI {
     @GetMapping("/pdf")
-    public ResponseEntity<byte[]> getReportPdf(@RequestParam LocalDate startDate,
-                                               @RequestParam LocalDate endDate,
-                                               @RequestParam String status,
-                                               @RequestParam BigDecimal minAmount,
-                                               @RequestParam BigDecimal maxAmount,
-                                               @RequestParam Long userId,
-                                               @PageableDefault(size = 20) Pageable pageable) ;
+    ResponseEntity<byte[]> getReportPdf(@RequestParam LocalDate startDate,
+                                        @RequestParam LocalDate endDate,
+                                        @RequestParam String status,
+                                        @RequestParam BigDecimal minAmount,
+                                        @RequestParam BigDecimal maxAmount,
+                                        @RequestParam Long userId,
+                                        @PageableDefault(size = 20) Pageable pageable);
 }
