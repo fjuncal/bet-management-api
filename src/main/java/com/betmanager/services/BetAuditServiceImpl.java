@@ -30,6 +30,7 @@ public class BetAuditServiceImpl implements IBetAuditService {
         List<Object[]> revisions = reader.createQuery()
                 .forRevisionsOfEntity(Bet.class, false, true)
                 .add(AuditEntity.property("user_id").eq(userId))
+                .addOrder(AuditEntity.revisionProperty("timestamp").desc())
                 .getResultList();
 
         // Transforme os resultados em uma resposta apropriada
