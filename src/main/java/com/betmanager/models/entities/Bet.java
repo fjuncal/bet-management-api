@@ -44,7 +44,7 @@ public class Bet {
     @LastModifiedDate
     private LocalDateTime updatedAt;
 
-    @NotNull(message = "Status cannot be null")
+    //@NotNull(message = "Status cannot be null")
     @Enumerated(EnumType.STRING)
     @StatusValidation
     private BetStatusEnum status;
