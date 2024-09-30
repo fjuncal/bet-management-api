@@ -10,10 +10,12 @@ import org.hibernate.envers.AuditReaderFactory;
 import org.hibernate.envers.DefaultRevisionEntity;
 import org.hibernate.envers.RevisionType;
 import org.hibernate.envers.query.AuditEntity;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -23,7 +25,7 @@ public class BetAuditServiceImpl implements IBetAuditService {
 
     @Override
     @SuppressWarnings("unchecked")
-    public List<BetAuditResponse> getUserBetAudits(Long userId) {
+    public Page<BetAuditResponse> getUserBetAudits(Long userId, Pageable pageable) {
         AuditReader reader = AuditReaderFactory.get(entityManager);
 
         // Obtenha todas as revisões de apostas relacionadas ao userId
@@ -34,9 +36,15 @@ public class BetAuditServiceImpl implements IBetAuditService {
                 .getResultList();
 
         // Transforme os resultados em uma resposta apropriada
-        return revisions.stream()
+        List<BetAuditResponse> auditResponses = revisions.stream()
                 .map(this::mapToAuditResponse)
-                .collect(Collectors.toList());
+                .toList();
+
+        // Fazer a paginação manual dos resultados
+        int start = Math.min((int) pageable.getOffset(), auditResponses.size());
+        int end = Math.min((start + pageable.getPageSize()), auditResponses.size());
+
+        return new PageImpl<>(auditResponses.subList(start, end), pageable, auditResponses.size());
     }
 
 
