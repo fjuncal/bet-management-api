@@ -75,4 +75,15 @@ public class GlobalExceptionHandler {
         log.error(HttpStatus.INTERNAL_SERVER_ERROR + ex.getMessage());
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR.value(), ex.getMessage()));
     }
+
+    @ExceptionHandler(RuntimeException.class)
+    public ResponseEntity<ErrorResponse> handleRuntimeException(RuntimeException ex) {
+        log.error(HttpStatus.INTERNAL_SERVER_ERROR + ex.getMessage());
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR.value(), ex.getMessage()));
+    }
+    @ExceptionHandler(CustomUnauthorizedException.class)
+    public ResponseEntity<ErrorResponse> handleCustomUnauthorizedException(CustomUnauthorizedException ex) {
+        log.error(HttpStatus.UNAUTHORIZED + ex.getMessage());
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ErrorResponse(HttpStatus.UNAUTHORIZED.value(), ex.getMessage()));
+    }
 }
