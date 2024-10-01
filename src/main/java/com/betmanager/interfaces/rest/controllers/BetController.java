@@ -61,7 +61,7 @@ public class BetController implements IBetAPI {
     }
 
     @Override
-    public ResponseEntity<Bet> updateBet(@PathVariable Long betId, @RequestBody Bet betDetails) {
+    public ResponseEntity<Bet> updateBet(@PathVariable Long betId, @Valid @RequestBody Bet betDetails) {
         Bet updatedBet = betService.udapteBet(betId, betDetails);
         return ResponseEntity.ok(updatedBet);
     }

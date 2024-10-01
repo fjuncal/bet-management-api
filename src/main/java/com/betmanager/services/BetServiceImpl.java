@@ -10,9 +10,9 @@ import com.betmanager.repositories.specification.BetSpecifications;
 import com.betmanager.services.interfaces.IBetService;
 import jakarta.persistence.EntityManager;
 import lombok.AllArgsConstructor;
-import lombok.SneakyThrows;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -32,6 +32,7 @@ public class BetServiceImpl implements IBetService {
     private EntityManager entityManager;
 
     @Override
+    @CacheEvict(value = "betsByUserCache", key = "#userId", allEntries = true)
     public Bet saveBet(Bet bet, Long userId) {
         UserEntity userEntity = userRepository.findById(userId)
                 .orElseThrow(() -> new NoUserFoundException("User not found"));
@@ -41,15 +42,14 @@ public class BetServiceImpl implements IBetService {
         return betRepository.save(savedBet);
     }
 
-    @SneakyThrows
     @Override
     @Cacheable(value = "betsByUserCache", key = "#userId + '-' + #pageable.pageNumber")
     public Page<Bet> getBetsByUserId(Long userId, Pageable pageable) {
-        Thread.sleep(8000);
         return betRepository.findByUserId(userId, pageable);
     }
 
     @Override
+    @CacheEvict(value = "betsByUserCache", key = "#betId", allEntries = true)
     public Bet udapteBet(Long betId, Bet betDetails) {
         Bet bet = betRepository.findById(betId)
                 .orElseThrow(() -> new NoBetFoundException("Bet not found"));
@@ -63,6 +63,7 @@ public class BetServiceImpl implements IBetService {
     }
 
     @Override
+    @CacheEvict(value = "betsByUserCache", key = "#betId", allEntries = true)
     public void deleteBet(Long betId) {
         Bet bet = betRepository.findById(betId)
                 .orElseThrow(() -> new NoBetFoundException("Bet not found"));
