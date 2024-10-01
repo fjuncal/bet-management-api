@@ -17,6 +17,9 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -53,6 +56,15 @@ public class BetServiceImpl implements IBetService {
     public Bet udapteBet(Long betId, Bet betDetails) {
         Bet bet = betRepository.findById(betId)
                 .orElseThrow(() -> new NoBetFoundException("Bet not found"));
+
+        // Recupera o usuário autenticado
+        String loggedUsername = ((UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUsername();
+
+        // Verifica se o usuário autenticado é o dono da Bet
+        if (!bet.getUser().getUsername().equals(loggedUsername)) {
+            throw new AccessDeniedException("You are not authorized to update this bet.");
+        }
+
         bet.setType(betDetails.getType());
         bet.setAmount(betDetails.getAmount());
         bet.setStatus(betDetails.getStatus());
@@ -67,6 +79,14 @@ public class BetServiceImpl implements IBetService {
     public void deleteBet(Long betId) {
         Bet bet = betRepository.findById(betId)
                 .orElseThrow(() -> new NoBetFoundException("Bet not found"));
+
+        // Recupera o usuário autenticado
+        String loggedUsername = ((UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUsername();
+
+        // Verifica se o usuário autenticado é o dono da Bet
+        if (!bet.getUser().getUsername().equals(loggedUsername)) {
+            throw new AccessDeniedException("You are not authorized to update this bet.");
+        }
 
         logger.info("User {} deleted a bet with ID {}", bet.getUser().getId(), betId);
         betRepository.delete(bet);
