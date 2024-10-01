@@ -10,8 +10,10 @@ import com.betmanager.repositories.specification.BetSpecifications;
 import com.betmanager.services.interfaces.IBetService;
 import jakarta.persistence.EntityManager;
 import lombok.AllArgsConstructor;
+import lombok.SneakyThrows;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -39,8 +41,11 @@ public class BetServiceImpl implements IBetService {
         return betRepository.save(savedBet);
     }
 
+    @SneakyThrows
     @Override
+    @Cacheable(value = "betsByUserCache", key = "#userId + '-' + #pageable.pageNumber")
     public Page<Bet> getBetsByUserId(Long userId, Pageable pageable) {
+        Thread.sleep(8000);
         return betRepository.findByUserId(userId, pageable);
     }
 
@@ -67,6 +72,7 @@ public class BetServiceImpl implements IBetService {
     }
 
     @Override
+    @Cacheable(value = "betsByFiltersCache", key = "#startDate + '-' + #endDate + '-' + #status + '-' + #minAmount + '-' + #maxAmount + '-' + #userId + '-' + #pageable.pageNumber")
     public Page<Bet> getBetsByFilters(LocalDate startDate, LocalDate endDate, String status, BigDecimal minAmount, BigDecimal maxAmount, Long userId, Pageable pageable) {
         return betRepository.findAll(Specification.where(
                 BetSpecifications.hasDateBetween(startDate, endDate)

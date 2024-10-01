@@ -1,9 +1,11 @@
 package com.betmanager.interfaces.rest.controllers;
 
 
+import com.betmanager.exception.NoUserFoundException;
 import com.betmanager.interfaces.rest.IBetAPI;
 import com.betmanager.models.entities.Bet;
 import com.betmanager.services.BetServiceImpl;
+import io.github.resilience4j.ratelimiter.RequestNotPermitted;
 import io.github.resilience4j.ratelimiter.annotation.RateLimiter;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
@@ -37,7 +39,12 @@ public class BetController implements IBetAPI {
     }
 
     public ResponseEntity<Bet> rateLimitFallback(Bet bet, Long userId, Throwable t) {
-        return ResponseEntity.status(429).body(null);
+        if (t instanceof RequestNotPermitted){
+            return ResponseEntity.status(429).body(null);
+        } else if (t instanceof NoUserFoundException){
+            throw new NoUserFoundException(t.getMessage());
+        }
+        throw new RuntimeException(t);
     }
 
     @Override
@@ -46,8 +53,11 @@ public class BetController implements IBetAPI {
         Page<Bet>bets = betService.getBetsByUserId(userId, pageable);
         return ResponseEntity.ok(assembler.toModel(bets));
     }
-    public ResponseEntity<Page<Bet>> rateLimitFallback(Long userId, Pageable pageable, Throwable t) {
-        return ResponseEntity.status(429).body(Page.empty());
+    public ResponseEntity<Page<Bet>> rateLimitFallback(Long userId, Pageable pageable, PagedResourcesAssembler<Bet> assembler, Throwable t) {
+        if (t instanceof RequestNotPermitted) {
+            return ResponseEntity.status(429).body(Page.empty());
+        }
+        throw new RuntimeException(t);
     }
 
     @Override

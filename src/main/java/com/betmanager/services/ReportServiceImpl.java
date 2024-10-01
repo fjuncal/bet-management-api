@@ -13,11 +13,11 @@ import com.itextpdf.layout.element.Image;
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.element.Table;
 import com.itextpdf.layout.properties.UnitValue;
-import com.opencsv.CSVWriter;
 import lombok.SneakyThrows;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -26,13 +26,13 @@ import org.springframework.stereotype.Service;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.StringWriter;
 import java.util.List;
 
 @Service
 public class ReportServiceImpl implements IReportService {
 
     @SneakyThrows
+    @Cacheable(value = "reportsPdfCache", key = "#startDate + '-' + #endDate + '-' + #status + '-' + #minAmount + '-' + #maxAmount + '-' + #userId")
     public ResponseEntity<byte[]> exportReportAsPdf(Page<Bet> bets) {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         PdfWriter writer = new PdfWriter(baos);
@@ -92,6 +92,7 @@ public class ReportServiceImpl implements IReportService {
     }
 
     @Override
+    @Cacheable(value = "reportsCsvCache", key = "#startDate + '-' + #endDate + '-' + #status + '-' + #minAmount + '-' + #maxAmount + '-' + #userId")
     public ResponseEntity<byte[]> exportReportAsCsv(List<Bet> bets) throws IOException {
         try (XSSFWorkbook workbook = new XSSFWorkbook()) {
             Sheet sheet = workbook.createSheet("Bet Report");

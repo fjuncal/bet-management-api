@@ -10,6 +10,7 @@ import org.hibernate.envers.AuditReaderFactory;
 import org.hibernate.envers.DefaultRevisionEntity;
 import org.hibernate.envers.RevisionType;
 import org.hibernate.envers.query.AuditEntity;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -25,6 +26,7 @@ public class BetAuditServiceImpl implements IBetAuditService {
 
     @Override
     @SuppressWarnings("unchecked")
+    @Cacheable(value = "betAuditCache", key = "#userId + '-' + #pageable.pageNumber")
     public Page<BetAuditResponse> getUserBetAudits(Long userId, Pageable pageable) {
         AuditReader reader = AuditReaderFactory.get(entityManager);
 
