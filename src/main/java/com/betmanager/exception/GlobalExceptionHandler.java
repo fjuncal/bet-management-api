@@ -1,6 +1,6 @@
 package com.betmanager.exception;
 
-import com.betmanager.models.dtos.ErrorResponse;
+import com.betmanager.models.dtos.ApiResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.coyote.BadRequestException;
 import org.springframework.http.HttpStatus;
@@ -23,75 +23,92 @@ import java.util.Map;
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(value = NoUserFoundException.class)
-    public ResponseEntity<ErrorResponse> handleNoUserFoundException(NoUserFoundException ex) {
+    public ResponseEntity<ApiResponse<String>> handleNoUserFoundException(NoUserFoundException ex) {
         log.error(HttpStatus.NOT_FOUND + ex.getMessage(), ex);
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorResponse(HttpStatus.NOT_FOUND.value(), ex.getMessage()));
+        ApiResponse<String> response = new ApiResponse<>("error", null, ex.getMessage());
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
     }
 
     @ExceptionHandler(value = UserAlreadyExist.class)
-    public ResponseEntity<ErrorResponse> handleUserAlreadyExist(UserAlreadyExist ex) {
+    public ResponseEntity<ApiResponse<String>> handleUserAlreadyExist(UserAlreadyExist ex) {
         log.error(HttpStatus.CONFLICT + ex.getMessage(), ex);
-        return ResponseEntity.status(HttpStatus.CONFLICT).body(new ErrorResponse(HttpStatus.CONFLICT.value(), ex.getMessage()));
+        ApiResponse<String> response = new ApiResponse<>("error", null, ex.getMessage());
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(response);
     }
 
     @ExceptionHandler({AuthenticationException.class, InternalAuthenticationServiceException.class})
-    public ResponseEntity<ErrorResponse> handleAuthenticationException(AuthenticationException ex) {
+    public ResponseEntity<ApiResponse<String>> handleAuthenticationException(AuthenticationException ex) {
         log.error(HttpStatus.NOT_FOUND + ex.getMessage(), ex);
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorResponse(HttpStatus.NOT_FOUND.value(), ex.getMessage()));
+        ApiResponse<String> response = new ApiResponse<>("error", null, ex.getMessage());
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
     }
 
     @ExceptionHandler(value = NoBetFoundException.class)
-    public ResponseEntity<ErrorResponse> handleNoBetFoundException(NoBetFoundException ex) {
+    public ResponseEntity<ApiResponse<String>> handleNoBetFoundException(NoBetFoundException ex) {
         log.error(HttpStatus.NOT_FOUND + ex.getMessage(), ex);
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorResponse(HttpStatus.NOT_FOUND.value(), ex.getMessage()));
+        ApiResponse<String> response = new ApiResponse<>("error", null, ex.getMessage());
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<Map<String, String>> handleMethodArgumentNotValidException(MethodArgumentNotValidException ex) {
+    public ResponseEntity<ApiResponse<Map<String, String>>> handleMethodArgumentNotValidException(MethodArgumentNotValidException ex) {
         Map<String, String> errors = new HashMap<>();
         ex.getBindingResult().getAllErrors().forEach(error -> {
             String fieldName = ((FieldError) error).getField();
             String errorMessage = error.getDefaultMessage();
             errors.put(fieldName, errorMessage);
         });
-        return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
+
+        ApiResponse<Map<String, String>> response = new ApiResponse<>("error", errors, "Validation failed");
+        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
+
     @ExceptionHandler(BadRequestException.class)
-    public ResponseEntity<ErrorResponse> handleBadRequestException(BadRequestException ex) {
+    public ResponseEntity<ApiResponse<String>> handleBadRequestException(BadRequestException ex) {
         log.error(HttpStatus.BAD_REQUEST + ex.getMessage(), ex);
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(HttpStatus.BAD_REQUEST.value(), ex.getMessage()));
+        ApiResponse<String> response = new ApiResponse<>("error", null, ex.getMessage());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
     }
+
     @ExceptionHandler(MissingServletRequestParameterException.class)
-    public ResponseEntity<ErrorResponse> handleMissingServletRequestParameterException(MissingServletRequestParameterException ex) {
+    public ResponseEntity<ApiResponse<String>> handleMissingServletRequestParameterException(MissingServletRequestParameterException ex) {
         log.error(HttpStatus.BAD_REQUEST + ex.getMessage(), ex);
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse(HttpStatus.BAD_REQUEST.value(), ex.getMessage()));
+        ApiResponse<String> response = new ApiResponse<>("error", null, ex.getMessage());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
     }
 
     @ExceptionHandler(ClassNotFoundException.class)
-    public ResponseEntity<ErrorResponse> handleClassNotFoundException(ClassNotFoundException ex) {
+    public ResponseEntity<ApiResponse<String>> handleClassNotFoundException(ClassNotFoundException ex) {
         log.error("ClassNotFoundException: " + ex.getMessage(), ex);
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR.value(), "Internal server error occurred."));
+        ApiResponse<String> response = new ApiResponse<>("error", null, ex.getMessage());
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
     }
+
     @ExceptionHandler(HttpMessageNotReadableException.class)
-    public ResponseEntity<ErrorResponse> handleHttpMessageNotReadableException(HttpMessageNotReadableException ex) {
+    public ResponseEntity<ApiResponse<String>> handleHttpMessageNotReadableException(HttpMessageNotReadableException ex) {
         log.error(HttpStatus.INTERNAL_SERVER_ERROR + ex.getMessage(), ex);
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR.value(), ex.getMessage()));
+        ApiResponse<String> response = new ApiResponse<>("error", null, ex.getMessage());
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
     }
 
     @ExceptionHandler(RuntimeException.class)
-    public ResponseEntity<ErrorResponse> handleRuntimeException(RuntimeException ex) {
+    public ResponseEntity<ApiResponse<String>> handleRuntimeException(RuntimeException ex) {
         log.error(HttpStatus.INTERNAL_SERVER_ERROR + ex.getMessage(), ex);
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR.value(), ex.getMessage()));
+        ApiResponse<String> response = new ApiResponse<>("error", null, ex.getMessage());
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
     }
+
     @ExceptionHandler(CustomUnauthorizedException.class)
-    public ResponseEntity<ErrorResponse> handleCustomUnauthorizedException(CustomUnauthorizedException ex) {
+    public ResponseEntity<ApiResponse<String>> handleCustomUnauthorizedException(CustomUnauthorizedException ex) {
         log.error(HttpStatus.UNAUTHORIZED + ex.getMessage(), ex);
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ErrorResponse(HttpStatus.UNAUTHORIZED.value(), ex.getMessage()));
+        ApiResponse<String> response = new ApiResponse<>("error", null, ex.getMessage());
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
     }
 
     @ExceptionHandler(AccessDeniedException.class)
-    public ResponseEntity<ErrorResponse> handleAccessDeniedException(AccessDeniedException ex) {
+    public ResponseEntity<ApiResponse<String>> handleAccessDeniedException(AccessDeniedException ex) {
         log.error(HttpStatus.UNAUTHORIZED + ex.getMessage(), ex);
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ErrorResponse(HttpStatus.UNAUTHORIZED.value(), ex.getMessage()));
+        ApiResponse<String> response = new ApiResponse<>("error", null, ex.getMessage());
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
     }
 }

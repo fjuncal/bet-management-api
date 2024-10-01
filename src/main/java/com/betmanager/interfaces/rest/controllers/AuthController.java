@@ -1,6 +1,7 @@
 package com.betmanager.interfaces.rest.controllers;
 
 
+import com.betmanager.models.dtos.ApiResponse;
 import com.betmanager.models.dtos.AuthenticationRequest;
 import com.betmanager.models.dtos.AuthenticationResponse;
 import com.betmanager.models.entities.UserEntity;
@@ -14,7 +15,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -33,24 +33,40 @@ public class AuthController {
     private final UserServiceImpl userService;
 
     @PostMapping("/register")
-    public ResponseEntity<Boolean> registerUser(@RequestBody UserEntity user) {
+    public ResponseEntity<ApiResponse<Boolean>> registerUser(@RequestBody UserEntity user) {
         Boolean success = userService.createUser(user);
-        return new ResponseEntity<>(success, HttpStatus.CREATED);
-
+        ApiResponse<Boolean> response = new ApiResponse<>(
+                "success",
+                success,
+                "User registered successfully"
+        );
+        return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
     @PostMapping("/login")
     @RateLimiter(name = "loginRateLimiter", fallbackMethod = "rateLimitFallback")
-    public ResponseEntity<AuthenticationResponse> createAuthToken(@RequestBody AuthenticationRequest authenticationRequest) {
+    public ResponseEntity<ApiResponse<AuthenticationResponse>>  createAuthToken(@RequestBody AuthenticationRequest authenticationRequest) {
         authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(authenticationRequest.getUsername(), authenticationRequest.getPassword()));
 
         UserDetails userDetails = userDetailsService.loadUserByUsername(authenticationRequest.getUsername());
         String jwt = jwtTokenUtil.generateToken(userDetails);
+        AuthenticationResponse authResponse = new AuthenticationResponse(jwt);
 
-        return new ResponseEntity<>(new AuthenticationResponse(jwt), HttpStatus.OK);
+        ApiResponse<AuthenticationResponse> response = new ApiResponse<>(
+                "success",
+                authResponse,
+                "Authentication successful"
+        );
+
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    public ResponseEntity<AuthenticationResponse> rateLimitFallback(AuthenticationRequest authenticationRequest, Throwable t) {
-        return ResponseEntity.status(429).body(null);
+    public  ResponseEntity<ApiResponse<AuthenticationResponse>> rateLimitFallback(AuthenticationRequest authenticationRequest, Throwable t) {
+        ApiResponse<AuthenticationResponse> response = new ApiResponse<>(
+                "error",
+                null,
+                "Too many requests, please try again later."
+        );
+        return ResponseEntity.status(429).body(response);
     }
 }
