@@ -30,6 +30,13 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws ServletException, IOException {
+        String path = request.getRequestURI();
+
+        // Verifica se o caminho é o endpoint WebSocket
+        if (path.startsWith("/ws")) {
+            chain.doFilter(request, response); // Ignora o filtro para WebSocket
+            return;
+        }
         try {
             final String authorizationHeader = request.getHeader("Authorization");
 

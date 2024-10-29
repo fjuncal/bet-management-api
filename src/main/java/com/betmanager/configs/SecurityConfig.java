@@ -31,6 +31,7 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable) // Desativando CSRF por enquanto
                 .headers(headers -> headers.frameOptions(HeadersConfigurer.FrameOptionsConfig::disable)) // Necessário para o console do H2
                 .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/ws/**").permitAll() // Permite WebSocket sem autenticação
                         .requestMatchers("/api/auth/**").permitAll()
                         .requestMatchers("/api/bets/**").authenticated()
                         .requestMatchers("/api/reports").authenticated()
