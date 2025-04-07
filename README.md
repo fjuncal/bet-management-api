@@ -44,7 +44,8 @@ Editar
 ## 📦 Installation
 
 # Clone the repository
-git clone https://github.com/fjuncal/bet-management-api.git
+git clone 
+https://github.com/fjuncal/bet-management-api.git
 cd bet-management-api
 
 # Run the application
