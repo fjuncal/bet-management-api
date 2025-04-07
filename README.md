@@ -31,12 +31,6 @@ A complete and scalable RESTful API for managing sports bets. Built with Java an
 
 ---
 
-## 📷 Screenshot
-
-> ![Screenshot](./public/bet-management-api.png)
-
----
-
 ## 📂 Folder Structure
 
 src ├── config ├── controller ├── dto ├── entity ├── enums ├── repository ├── service └── websocket
